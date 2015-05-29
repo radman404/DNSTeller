@@ -46,7 +46,7 @@ def reporter(z, server, ns):
     server = ns
   out = '{}: {}'.format('ZT!', server)
   print out
-  fn = savedir + server + '_output.txt'
+  fn = os.path.join(savedir, server + '_output.txt')
   i = '{:=^60} Vulnerable Name Server! ' + ns + '\n'
   with open(fn, 'a') as d:
     ip = []
