@@ -7,7 +7,6 @@
 # or
 # domain.com
 # NO http:// or https://
-# please strip these before running
 # Written by Kyle Fleming
 
 import dns.query
@@ -15,7 +14,8 @@ import dns.zone
 import dns.resolver
 from multiprocessing import Pool
 import os
-savedir = '/home/your/zonedir'
+import argparse
+
 def ztit(line):
  #Zone Transfer function
  #Takes line from file finds nameservers
@@ -35,7 +35,6 @@ def ztit(line):
       else:
         continue
   except Exception as e:
-    print e
     return
 
 def reporter(z, server, ns):
@@ -83,7 +82,13 @@ def reporter(z, server, ns):
           s = '{}\t {}\t {}\t {}\t {} {}'.format(host, ip[0], ip[1], ip[2], emp.join(ip[3:]), nl)
           d.write(s)
 
-def main():
+if __name__ == '__main__':
+  parser = argparse.ArgumentParser(description="Attempt to perform a DNS zone transfer against targets in file.")
+  parser.add_argument("--targets-file", dest="targets_file", default="domains.txt", help="a file containing target domains")
+  parser.add_argument("--save-dir", dest="save_dir", default=".", help="a directory to save transfer results")
+  args = parser.parse_args()
+  
+  savedir = args.save_dir
   #Some not so fancy number collection
   #Grab some processes
   #Open file give process a function and a line
@@ -91,7 +96,7 @@ def main():
   #Finish
   startcount = len(os.listdir(savedir))
   dom = Pool(processes=25)
-  mains = open("domains.txt", "r").readlines()
+  mains = open(args.targets_file, "r").readlines()
   overall = len(mains)
   dom.map(ztit, mains)
   abscount = len(os.listdir(savedir))
@@ -100,5 +105,3 @@ def main():
   finished = '\033[01;38mWe got {} Zone transfers out of {} With a hit % of {}%\033[1;m'.format(str(totcount),
                                                                                 str(overall), str(stats))
   print finished
-
-main()
