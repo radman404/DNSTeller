@@ -8,6 +8,8 @@
 # domain.com
 # NO http:// or https://
 # Written by Kyle Fleming
+# 'pip install dnspython' Should give you all you need if you run into issues.
+#############################################################################
 
 import dns.query
 import dns.zone
